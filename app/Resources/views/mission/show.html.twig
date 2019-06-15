@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Mission</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ mission.id }}</td>
+            </tr>
+            <tr>
+                <th>Servicedate</th>
+                <td>{% if mission.serviceDate %}{{ mission.serviceDate|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Productname</th>
+                <td>{{ mission.productName }}</td>
+            </tr>
+            <tr>
+                <th>Quantity</th>
+                <td>{{ mission.quantity }}</td>
+            </tr>
+            <tr>
+                <th>Destinationcountry</th>
+                <td>{{ mission.destinationCountry }}</td>
+            </tr>
+            <tr>
+                <th>Vendorname</th>
+                <td>{{ mission.vendorName }}</td>
+            </tr>
+            <tr>
+                <th>Vendoremail</th>
+                <td>{{ mission.vendorEmail }}</td>
+            </tr>
+            <tr>
+                <th>Createdat</th>
+                <td>{% if mission.createdAt %}{{ mission.createdAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Updatedat</th>
+                <td>{% if mission.updatedAt %}{{ mission.updatedAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('mission_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('mission_edit', { 'id': mission.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Mission list</h1><button class="btn btn-primary" href="{{ path('mission_new') }}">Create a new entry</button>
+
+    <table class="table">
+        <thead>
+            <tr>
+                {% if is_granted('ROLE_ADMIN') %} <th>Client</th>  {% endif %}
+                <th>Service Date</th>
+                <th>Product Name</th>
+                <th>Vendor Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for mission in missions %}
+            <tr>
+                {% if is_granted('ROLE_ADMIN') %} <td>{{ mission.client.username }}</td>  {% endif %}
+                <td>{% if mission.serviceDate %}<a href="{{ path('mission_show', { 'id': mission.id }) }}">{{ mission.serviceDate|date('Y-m-d') }}</a>{% endif %}</td>
+                <td><a href="{{ path('mission_show', { 'id': mission.id }) }}">{{ mission.productName }}</a></td>
+                <td>{{ mission.vendorName }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('mission_show', { 'id': mission.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('mission_edit', { 'id': mission.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+    <div class="navigation">
+        {{ knp_pagination_render(missions) }}
+    </div>
+
+    <button class="btn btn-primary" href="{{ path('mission_new') }}">Create a new entry</button>
+{% endblock %}
