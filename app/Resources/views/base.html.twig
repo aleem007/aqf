@@ -12,6 +12,10 @@
             body {
                 padding-top: 70px;
             }
+
+            .top-buffer {
+                margin-top:20px;
+            }
         </style>
     </head>
     <body>
@@ -25,7 +29,7 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" href="#">Project name</a>
+                        <a class="navbar-brand" href="{{ path("mission_index") }}">AQF - {{ app.user.username }}</a>
                     </div>
                     <div id="navbar" class="navbar-collapse collapse">
                         <ul class="nav navbar-nav">
@@ -43,6 +47,7 @@
             <!-- Fixed navbar -->
             {% block body %}{% endblock %}
         </div>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
         {% block javascripts %}{% endblock %}
     </body>

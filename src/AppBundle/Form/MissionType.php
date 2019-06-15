@@ -17,19 +17,14 @@ class MissionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('serviceDate', 'datetime')
+            ->add('serviceDate', 'datetime',[
+                'widget'=>'single_text'
+            ])
             ->add('productName')
             ->add('quantity')
             ->add('destinationCountry')
             ->add('vendorName')
             ->add('vendorEmail')
-            ->add('createdAt', 'datetime')
-            ->add('updatedAt', 'datetime')
-            ->add('client',EntityType::class,[
-                // looks for choices from this entity
-                'class' => User::class,
-                'choice_label' => 'username',
-            ])
         ;
     }
     

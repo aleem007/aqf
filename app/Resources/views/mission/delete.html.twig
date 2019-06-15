@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="row">
+        <h3>Are you sure, you want to delete?</h3>
+        {{ form_start(delete_form) }}
+            <button class="btn btn-danger btn-lg">Delete</button>
+        {{ form_end(delete_form) }}
+    </div>
+
+    <div class="row top-buffer">
+        <a class="btn btn-success btn-lg" href="{{ path('mission_edit', { 'id': mission.id }) }}">Edit</a>
+        <a class="btn btn-warning btn-lg" href="{{ path('mission_index') }}">Back to the list</a>
+    </div>
+{% endblock %}

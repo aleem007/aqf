@@ -2,6 +2,9 @@
 
 {% block body %}
     <h1>Mission list</h1><button class="btn btn-primary" href="{{ path('mission_new') }}">Create a new entry</button>
+    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#exampleModalLong">
+       Filter Contents
+    </button>
 
     <table class="table">
         <thead>
@@ -23,10 +26,10 @@
                 <td>
                     <ul>
                         <li>
-                            <a href="{{ path('mission_show', { 'id': mission.id }) }}">show</a>
+                            <a href="{{ path('mission_edit', { 'id': mission.id }) }}">edit</a>
                         </li>
                         <li>
-                            <a href="{{ path('mission_edit', { 'id': mission.id }) }}">edit</a>
+                            <a href="{{ path('mission_delete', { 'id': mission.id }) }}">delete</a>
                         </li>
                     </ul>
                 </td>
@@ -41,4 +44,55 @@
     </div>
 
     <button class="btn btn-primary" href="{{ path('mission_new') }}">Create a new entry</button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form action="{{ path('mission_index') }}" method="get">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="client">Client</label>
+                            <input type="text" class="form-control" name="client" id="client">
+                        </div>
+                        <div class="form-group">
+                            <label for="service-date-from">Service Date - From</label>
+                            <input type="text" class="form-control" name="service-date-from" id="service-date-from">
+                        </div>
+                        <div class="form-group">
+                            <label for="service-date-to">Service Date - To</label>
+                            <input type="text" class="form-control" name="service-date-to" id="service-date-to">
+                        </div>
+                        <div class="form-group">
+                            <label for="product-name">Product Name</label>
+                            <input type="text" class="form-control" name="product-name" id="product-name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="vendor-name">Vendor Name</label>
+                            <input type="text" class="form-control" name="vendor-name" id="vendor-name">
+                        </div>
+                        <div class="form-group">
+                            <label for="vendor-email">Vendor Email</label>
+                            <input type="text" class="form-control" name="vendor-email" id="vendor-email">
+                        </div>
+                        <div class="form-group">
+                            <label for="destination-country">Destination Country</label>
+                            <input type="text" class="form-control" name="destination-country" id="destination-country">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 {% endblock %}

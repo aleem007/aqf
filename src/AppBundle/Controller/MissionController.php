@@ -24,9 +24,10 @@ class MissionController extends Controller
      */
     public function indexAction(Request $request)
     {
+        $filterQueryParams = $request->query->all();
         $pagelimit = $this->container->getParameter("pagination_limit");
         $em = $this->getDoctrine()->getManager();
-        $missions = $em->getRepository('AppBundle:Mission')->findByCurrentUser($this->getUser());
+        $missions = $em->getRepository('AppBundle:Mission')->findByCurrentUser($this->getUser(),$filterQueryParams);
 
         $paginator  = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
@@ -55,6 +56,7 @@ class MissionController extends Controller
         $mission = new Mission();
         $form = $this->createForm('AppBundle\Form\MissionType', $mission);
         $form->handleRequest($request);
+        $mission->setClient($this->getUser());
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
@@ -78,6 +80,10 @@ class MissionController extends Controller
      */
     public function showAction(Mission $mission)
     {
+        $em = $this->getDoctrine()->getManager();
+        if(!$em->getRepository('AppBundle:Mission')->isCreatedByCurrentUser($this->getUser(), $mission->getId())) {
+            throw new AccessDeniedHttpException("You aren't the owner of this mission. Access Denied");
+        }
         $deleteForm = $this->createDeleteForm($mission);
 
         return $this->render('mission/show.html.twig', array(
@@ -94,6 +100,15 @@ class MissionController extends Controller
      */
     public function editAction(Request $request, Mission $mission)
     {
+        $em = $this->getDoctrine()->getManager();
+        if(!$em->getRepository('AppBundle:Mission')->isCreatedByCurrentUser($this->getUser(), $mission->getId())) {
+            throw new AccessDeniedHttpException("You aren't the owner of this mission. Access Denied");
+        }
+
+        if($this->getUser()->isAdmin()) {
+            throw new AccessDeniedHttpException("Only Clients can edit the respective missions");
+        }
+
         $deleteForm = $this->createDeleteForm($mission);
         $editForm = $this->createForm('AppBundle\Form\MissionType', $mission);
         $editForm->handleRequest($request);
@@ -103,7 +118,7 @@ class MissionController extends Controller
             $em->persist($mission);
             $em->flush();
 
-            return $this->redirectToRoute('mission_edit', array('id' => $mission->getId()));
+            return $this->redirectToRoute('mission_show', array('id' => $mission->getId()));
         }
 
         return $this->render('mission/edit.html.twig', array(
@@ -116,21 +131,32 @@ class MissionController extends Controller
     /**
      * Deletes a Mission entity.
      *
-     * @Route("/{id}", name="mission_delete")
-     * @Method("DELETE")
+     * @Route("/{id}/delete", name="mission_delete")
+     * @Method({"GET","DELETE"})
      */
     public function deleteAction(Request $request, Mission $mission)
     {
+        $em = $this->getDoctrine()->getManager();
+        if(!$em->getRepository('AppBundle:Mission')->isCreatedByCurrentUser($this->getUser(), $mission->getId())) {
+            throw new AccessDeniedHttpException("You aren't the owner of this mission. Access Denied");
+        }
+
         $form = $this->createDeleteForm($mission);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($mission);
-            $em->flush();
+        if($request->getMethod() == Request::METHOD_DELETE) {
+            if ($form->isSubmitted() && $form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->remove($mission);
+                $em->flush();
+            }
+            return $this->redirectToRoute('mission_index');
         }
 
-        return $this->redirectToRoute('mission_index');
+        return $this->render('mission/delete.html.twig', array(
+            'mission' => $mission,
+            'delete_form' => $form->createView(),
+        ));
     }
 
     /**

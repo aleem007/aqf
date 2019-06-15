@@ -11,6 +11,6 @@ class DefaultController extends Controller
      */
     public function loginAction()
     {
-        return $this->redirect("/mission");
+        return $this->redirect($this->generateUrl("mission_index"));
     }
 }

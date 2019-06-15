@@ -3,6 +3,7 @@
 namespace AppBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * MissionRepository
@@ -12,14 +13,69 @@ use Doctrine\ORM\EntityRepository;
  */
 class MissionRepository extends EntityRepository
 {
-    public function findByCurrentUser($user) {
+    public function findByCurrentUser($user, $filterQueryParams) {
         $query = $this->createQueryBuilder("m");
         if(!$user->isAdmin()) {
             $query = $query->where("m.client = :client")
                             ->setParameter(":client", $user);
         }
+        $this->filterByParams($query, $filterQueryParams, $user);
         $query = $query->orderBy("m.serviceDate","DESC");
 
         return $query->getQuery();
+    }
+
+    public function isCreatedByCurrentUser($user, $id) {
+        if($user->isAdmin()){
+            return true;
+        }
+        $query = $this->createQueryBuilder("m");
+        $query = $query->where("m.client = :client")
+            ->setParameter(":client", $user)
+                    ->andWhere("m.id = :id")
+                    ->setParameter(":id",$id);
+
+        return $query->getQuery()->getResult();
+    }
+
+    public function filterByParams(QueryBuilder $query, $params, $user) {
+        foreach($params as $key=>$param) {
+            if (!empty($param)) {
+                switch ($key) {
+                    case "client":
+                        if ($user->isAdmin()) {
+                            $query->join("m.client", "c")
+                                ->andWhere("c.username like :username")
+                                ->setParameter(":username", "%" . $param . "%");
+                        }
+                        break;
+                    case "service-date-from":
+                        $query->andWhere("m.serviceDate >= :servicedate")
+                            ->setParameter(":servicedate", new \DateTime($param));
+                        break;
+                    case "service-date-to":
+                        $query->andWhere("m.serviceDate < :servicedate")
+                            ->setParameter(":servicedate", new \DateTime($param));
+                        break;
+                    case "product-name":
+                        $query->andWhere("m.productName like :productname")
+                            ->setParameter(":productname", "%" . $param . "%");
+                        break;
+                    case "vendor-name":
+                        $query->andWhere("m.vendorName like :vendorname")
+                            ->setParameter(":vendorname", "%" . $param . "%");
+                        break;
+                    case "vendor-email":
+                        $query->andWhere("m.vendorEmail like :vendoremail")
+                            ->setParameter(":vendorEmail", "%" . $param . "%");
+                        break;
+                    case "destination-country":
+                        $query->andWhere("m.destinationCountry like :destinationCountry")
+                            ->setParameter(":destinationCountry", "%" . $param . "%");
+                        break;
+                }
+            }
+        }
+
     }
 }
